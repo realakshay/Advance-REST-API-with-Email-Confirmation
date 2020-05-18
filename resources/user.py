@@ -16,6 +16,8 @@ USER_NOT_FOUND_ERROR = "The user with user id {} not found."
 USER_DELETE_SUCCESSFUL_INFO = "User deleted successful."
 USER_NOT_ACTIVATED_ERROR = "The user with id {} is not activated yet."
 INVALID_CREDENTIALS_INFO = "Provided info not valid. Please check your credentials."
+USER_ALREADY_ACTIVATED = "The user with id {} is already activated."
+USER_ACTIVATION_SUCCESSFUL_INFO = "The user is activated successful with user id {}."
 
 
 class UserRegister(Resource):
@@ -71,3 +73,18 @@ class UserLogin(Resource):
                 return {"access_token": access_token, "refresh_token": refresh_token}, 201
             return {"Message": USER_NOT_ACTIVATED_ERROR.format(user.id)}, 401
         return {"Message": INVALID_CREDENTIALS_INFO}, 401
+
+
+class UserActivation(Resource):
+
+    @classmethod
+    def get(cls, user_id: int):
+
+        user = UserModel.find_by_id(user_id)
+        if user:
+            if user.activated:
+                return {"Message": USER_ALREADY_ACTIVATED.format(user_id)}
+            user.activated = True
+            user.insert_in_db()
+            return {"Message": USER_ACTIVATION_SUCCESSFUL_INFO.format(user_id)}
+        return {"Message": USER_NOT_FOUND_ERROR.format(user_id)}
