@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager
 from db import db
 from ma import ma
 from resources.user import UserRegister, User, UserLogin, UserActivation, TokenRefresh, AllUser, UserLogout
+from resources.item import Item
 from blacklist import BLACKLIST
 
 
@@ -39,6 +40,7 @@ api.add_resource(UserActivation, '/activate/<int:user_id>')
 api.add_resource(TokenRefresh, '/refresh')
 api.add_resource(AllUser, '/users')
 api.add_resource(UserLogout, '/logout')
+api.add_resource(Item, '/item/<string:name>')
 
 
 if __name__ == '__main__':

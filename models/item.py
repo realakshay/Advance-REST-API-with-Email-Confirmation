@@ -19,3 +19,11 @@ class ItemModel(db.Model):
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+    def insert_in_db(self) -> None:
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
