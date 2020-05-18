@@ -3,7 +3,8 @@ from flask import Flask
 from flask_restful import Api
 from db import db
 from ma import ma
-from resources.user import UserRegister
+from resources.user import UserRegister, User
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('APP_SECRET_KEY')
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
 
 api.add_resource(UserRegister, '/register')
+api.add_resource(User, '/user/<int:user_id>')
 
 @app.before_first_request
 def create_tables():

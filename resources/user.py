@@ -10,6 +10,8 @@ users_schema = UserSchema(many=True)
 
 USERNAME_ALREADY_EXIST_INFO = "This username {} is already taken. Please use any other."
 USER_REGISTRATION_SUCCESSFUL_INFO = "Congratulations your registration is successful."
+USER_NOT_FOUND_ERROR = "The user with user id {} not found."
+USER_DELETE_SUCCESSFUL_INFO = "User deleted successful."
 
 
 class UserRegister(Resource):
@@ -28,3 +30,21 @@ class UserRegister(Resource):
 
         user_data.insert_in_db()
         return {"Message": USER_REGISTRATION_SUCCESSFUL_INFO}, 201
+
+
+class User(Resource):
+
+    @classmethod
+    def get(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {"Message": USER_NOT_FOUND_ERROR.format(user_id)}
+        return user_schema.dump(user), 200
+
+    @classmethod
+    def delete(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {"Message": USER_NOT_FOUND_ERROR.format(user_id)}
+        user.delete_from_db()
+        return {"Message": USER_DELETE_SUCCESSFUL_INFO}, 201
