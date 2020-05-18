@@ -98,3 +98,9 @@ class TokenRefresh(Resource):
         fresh_token = create_access_token(identity=user_id, fresh=False)
         return {"fresh_token": fresh_token}
 
+
+class AllUser(Resource):
+
+    @classmethod
+    def get(cls):
+        return {"Users": users_schema.dump(UserModel.find_all())}

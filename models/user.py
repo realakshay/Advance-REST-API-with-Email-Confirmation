@@ -1,5 +1,5 @@
 from db import db
-
+from typing import List
 
 class UserModel(db.Model):
     __tablename__ = "users"
@@ -14,8 +14,12 @@ class UserModel(db.Model):
         return cls.query.filter_by(username=username).first()
 
     @classmethod
-    def find_by_id(cls, id: int):
+    def find_by_id(cls, id: int) -> "UserModel":
         return cls.query.filter_by(id=id).first()
+
+    @classmethod
+    def find_all(cls) -> List:
+        return cls.query.all()
 
     def insert_in_db(self) -> None:
         db.session.add(self)
