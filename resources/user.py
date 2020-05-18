@@ -1,9 +1,10 @@
 from flask import request
 from flask_restful import Resource
 from werkzeug.security import safe_str_cmp
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_raw_jwt
 from marshmallow import ValidationError
 
+from blacklist import BLACKLIST
 from models.user import UserModel
 from schemas.user import UserSchema
 
@@ -18,6 +19,7 @@ USER_NOT_ACTIVATED_ERROR = "The user with id {} is not activated yet."
 INVALID_CREDENTIALS_INFO = "Provided info not valid. Please check your credentials."
 USER_ALREADY_ACTIVATED = "The user with id {} is already activated."
 USER_ACTIVATION_SUCCESSFUL_INFO = "The user is activated successful with user id {}."
+USER_LOGOUT_SUCCESSFUL_INFO = "The user have successfully logged out."
 
 
 class UserRegister(Resource):
@@ -54,6 +56,7 @@ class User(Resource):
             return {"Message": USER_NOT_FOUND_ERROR.format(user_id)}
         user.delete_from_db()
         return {"Message": USER_DELETE_SUCCESSFUL_INFO}, 201
+
 
 class UserLogin(Resource):
 
@@ -93,10 +96,21 @@ class UserActivation(Resource):
 class TokenRefresh(Resource):
 
     @classmethod
+    @jwt_required
     def post(cls):
         user_id = get_jwt_identity()
         fresh_token = create_access_token(identity=user_id, fresh=False)
         return {"fresh_token": fresh_token}
+
+
+class UserLogout(Resource):
+
+    @classmethod
+    @jwt_required
+    def post(cls):
+        jti = get_raw_jwt()['jti']
+        BLACKLIST.add(jti)
+        return {"Message": USER_LOGOUT_SUCCESSFUL_INFO}, 201
 
 
 class AllUser(Resource):
