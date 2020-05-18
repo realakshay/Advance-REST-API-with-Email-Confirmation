@@ -58,3 +58,10 @@ class Store(Resource):
             return {"Message": STORE_NOT_FOUND.format(name)}
         store.delete_from_db()
         return {"Messaga": STORE_DELETE_SUCCESSFUL.format(name)}
+
+
+class StoreList(Resource):
+
+    @classmethod
+    def get(cls):
+        return {"Stores": stores_schema.dump(StoreModel.find_all())}

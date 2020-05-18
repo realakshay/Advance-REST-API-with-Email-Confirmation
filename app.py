@@ -6,7 +6,7 @@ from db import db
 from ma import ma
 from resources.user import UserRegister, User, UserLogin, UserActivation, TokenRefresh, AllUser, UserLogout
 from resources.item import Item, ItemList
-from resources.store import Store
+from resources.store import Store, StoreList
 from blacklist import BLACKLIST
 
 
@@ -44,6 +44,7 @@ api.add_resource(UserLogout, '/logout')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(Store, '/store/<string:name>')
+api.add_resource(StoreList, '/stores')
 
 
 if __name__ == '__main__':
