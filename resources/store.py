@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import request
+from flask_jwt_extended import fresh_jwt_required, jwt_required
 from marshmallow import ValidationError
 
 from models.store import StoreModel
@@ -25,6 +26,7 @@ class Store(Resource):
         return store_schema.dump(store), 201
 
     @classmethod
+    @jwt_required
     def post(cls, name: str):
         store = StoreModel.find_by_name(name)
         if store:
@@ -38,6 +40,7 @@ class Store(Resource):
         return {"Message": STORE_INSERT_SUCCESSFUL_INFO.format(name)}
 
     @classmethod
+    @jwt_required
     def put(cls, name: str):
         store = StoreModel.find_by_name(name)
         if not store:
@@ -52,6 +55,7 @@ class Store(Resource):
         return {"Message": STORE_UPDATE_SUCCESSFUL}, 201
 
     @classmethod
+    @fresh_jwt_required
     def delete(cls, name: str):
         store = StoreModel.find_by_name(name)
         if not store:
