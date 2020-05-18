@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from flask_jwt_extended import jwt_required, fresh_jwt_required
+from flask_jwt_extended import jwt_required, fresh_jwt_required, get_jwt_claims
 from marshmallow import ValidationError
 
 from schemas.item import ItemSchema
@@ -14,6 +14,7 @@ ITEM_ALREADY_EXIST = "Item name {} is already exist."
 ITEM_INSERT_SUCCESSFUL = "Item with name {} is inserted successful."
 ITEM_UPDATE_SUCCESSFUL = "Item updation successful."
 ITEM_DELETE_SUCCESSFUL = "Item name {} has deleted successfully."
+ADMIN_PRIVILEGE_REQUIRE_ERROR = "You are not admin. Only authorised person can take this action"
 
 
 class Item(Resource):
@@ -57,6 +58,9 @@ class Item(Resource):
     @classmethod
     @fresh_jwt_required
     def delete(cls, name: str):
+        claims = get_jwt_claims()
+        if not claims["is_admin"]:
+            return {"Message": ADMIN_PRIVILEGE_REQUIRE_ERROR}, 401
         item = ItemModel.find_by_name(name)
         if not item:
             return {"Message": ITEM_NOT_FOUND.format(name)}

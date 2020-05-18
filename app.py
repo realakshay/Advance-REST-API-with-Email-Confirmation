@@ -24,6 +24,13 @@ def create_tables():
     db.create_all()
 
 
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    if identity == 1:
+        return {"is_admin": True}
+    return {"is_admin": False}
+
+
 @jwt.token_in_blacklist_loader
 def token_in_blacklist(decrypted_token):
     return decrypted_token['jti'] in BLACKLIST
