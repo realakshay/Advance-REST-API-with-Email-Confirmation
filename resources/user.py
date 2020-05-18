@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from werkzeug.security import safe_str_cmp
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
 from marshmallow import ValidationError
 
 from models.user import UserModel
@@ -88,3 +88,13 @@ class UserActivation(Resource):
             user.insert_in_db()
             return {"Message": USER_ACTIVATION_SUCCESSFUL_INFO.format(user_id)}
         return {"Message": USER_NOT_FOUND_ERROR.format(user_id)}
+
+
+class TokenRefresh(Resource):
+
+    @classmethod
+    def post(cls):
+        user_id = get_jwt_identity()
+        fresh_token = create_access_token(identity=user_id, fresh=False)
+        return {"fresh_token": fresh_token}
+
