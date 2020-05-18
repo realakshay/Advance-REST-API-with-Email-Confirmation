@@ -6,6 +6,7 @@ from schemas.item import ItemSchema
 from models.item import ItemModel
 
 item_schema = ItemSchema()
+items_schema = ItemSchema(many=True)
 
 ITEM_NOT_FOUND = "The item name {} is not found."
 ITEM_ALREADY_EXIST = "Item name {} is already exist."
@@ -56,3 +57,10 @@ class Item(Resource):
             return {"Message": ITEM_NOT_FOUND.format(name)}
         item.delete_from_db()
         return {"Message": ITEM_DELETE_SUCCESSFUL.format(name)}, 201
+
+
+class ItemList(Resource):
+
+    @classmethod
+    def get(cls):
+        return {"items": items_schema.dump(ItemModel.find_all())}
