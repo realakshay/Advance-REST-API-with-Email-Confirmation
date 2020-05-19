@@ -46,7 +46,8 @@ class UserModel(db.Model):
 
     def send_confirmation_mail(self) -> Response:
         link = request.url_root[:-1] + url_for("confirmation", confirmation_id=self.most_recent_confirmation.id)
-
+        print(link)
+        print(self.email)
         return requests.post(
             f"https://api.mailgun.net/v3/{MY_DOMAIN_NAME}/messages",
             auth=("api", MY_API_KEY),
@@ -54,7 +55,7 @@ class UserModel(db.Model):
                 "from": f"{FROM_TITLE} <{FROM_EMAIL}>",
                 "to": self.email,
                 "subject": "Registration confirmation",
-                "text": f"Please click the link to confirm your registration : {link}!"
+                "text": f"Please click the link to confirm your registration : {link}"
             }
         )
 

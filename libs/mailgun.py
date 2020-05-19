@@ -29,7 +29,7 @@ class Mailgun:
         if cls.MY_DOMAIN_NAME is None:
             raise MailGunException(FAILED_LOAD_DOMAIN)
 
-        response =  requests.post(
+        response = requests.post(
             f"https://api.mailgun.net/v3/{cls.MY_DOMAIN_NAME}/messages",
             auth=("api", cls.MY_API_KEY),
             data={

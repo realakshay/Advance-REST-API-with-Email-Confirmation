@@ -35,6 +35,7 @@ USER_ACTIVATION_SUCCESSFUL_INFO = "The user is activated successful with user id
 USER_LOGOUT_SUCCESSFUL_INFO = "The user have successfully logged out."
 FAILED_TO_CREATE = "Internal server error while creating"
 
+
 class UserRegister(Resource):
 
     @classmethod
@@ -91,14 +92,14 @@ class UserLogin(Resource):
     def post(cls):
         user_json = request.get_json()
         try:
-            user_data = user_schema.load(user_json)
+            user_data = user_schema.load(user_json, partial=("email",))
         except ValidationError as err:
             return err.messages, 401
 
         user = UserModel.find_by_username(user_data.username)
         if user and safe_str_cmp(user_data.password, user.password):
             confirmation = user.most_recent_confirmation
-            if confirmation and confirmation.confirmed:
+            if confirmation and confirmation.is_confirmed:
                 access_token = create_access_token(identity=user.id, fresh=True)
                 refresh_token = create_refresh_token(user.id)
                 return {"access_token": access_token, "refresh_token": refresh_token}, 201

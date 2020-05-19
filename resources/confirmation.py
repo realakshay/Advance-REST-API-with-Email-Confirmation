@@ -21,8 +21,8 @@ RESEND_FAIL = "Re-Confirmation mail send fail"
 class Confirmation(Resource):
 
     @classmethod
-    def get(cls, id: str):
-        confirmation = ConfirmationModel.find_by_id(id)
+    def get(cls, confirmation_id: str):
+        confirmation = ConfirmationModel.find_by_id(confirmation_id)
         if not confirmation:
             return {"Message": NOT_FOUND_ERROR}
         if confirmation.expired:
@@ -34,17 +34,18 @@ class Confirmation(Resource):
         confirmation.insert_in_db()
         return {"Message": "success"}
 
+
 class ConfirmationByUser(Resource):
 
     @classmethod
     def get(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
         if not user:
-            return {"Messaga": USER_NOT_FOUND}
+            return {"Message": USER_NOT_FOUND}
         return (
             {
                 "current time": int(time()),
-                "confirmation" : [
+                "confirmation": [
                     confirmation_schema.dump(each)
                     for each in user.confirmation.order_by(ConfirmationModel.expire_at)
                 ],

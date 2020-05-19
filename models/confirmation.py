@@ -16,6 +16,7 @@ class ConfirmationModel(db.Model):
     user = db.relationship("UserModel")
 
     def __init__(self, user_id: int, **kwargs):
+        super().__init__(**kwargs)
         self.user_id = user_id
         self.is_confirmed = False
         self.expire_at = int(time()) + CONFIRMATION_EXPIRATION_DELTA
